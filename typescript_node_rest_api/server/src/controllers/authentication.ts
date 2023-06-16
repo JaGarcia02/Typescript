@@ -3,8 +3,8 @@ import { authentication, random } from "../helpers";
 import { createUser, getUsersByEmail } from "../models/user_models";
 
 export const login = async (req: express.Request, res: express.Response) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
     if (!email || !password) {
       return res.sendStatus(400);
     }

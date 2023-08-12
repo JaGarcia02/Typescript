@@ -22,12 +22,15 @@ module.exports = (sequelize: any, DataTypes: any) => {
 
     static associate(models: any) {
       // define association here
+      User.belongsToMany(models.Project, {
+        through: "ProjectAssignments",
+      });
     }
   }
   User.init(
     {
       id: {
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
         defaultValue: UUIDV4,
         allowNull: false,
         primaryKey: true,

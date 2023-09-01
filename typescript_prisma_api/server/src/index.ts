@@ -13,3 +13,6 @@ app.use("/api", router());
 app.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`);
 });
+
+// https://www.youtube.com/watch?v=AhP9I8_l-H0&ab_channel=Rettson
+// npx prisma studio <-- to run prisma studio

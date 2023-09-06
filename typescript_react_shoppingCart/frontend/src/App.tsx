@@ -26,3 +26,5 @@ function App() {
 }
 
 export default App;
+
+// https://www.youtube.com/watch?v=lATafp15HWA 41:28

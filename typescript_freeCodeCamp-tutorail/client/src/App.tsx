@@ -68,3 +68,5 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+// https://www.youtube.com/watch?v=FJDVKeh7RJI&t=311s&ab_channel=freeCodeCamp.org 1:03:32

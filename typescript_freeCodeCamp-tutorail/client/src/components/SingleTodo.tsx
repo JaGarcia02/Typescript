@@ -6,15 +6,9 @@ interface SingleTodoProps {
   todos: Todo[];
   todo: Todo;
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
-  setTodo: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const SingleTodo: React.FC<SingleTodoProps> = ({
-  todos,
-  setTodos,
-  todo,
-  setTodo,
-}) => {
+const SingleTodo: React.FC<SingleTodoProps> = ({ todos, setTodos, todo }) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [editTodo, setEditTodo] = useState<string>(todo.todo);
   const handleDone = (id: number) => {

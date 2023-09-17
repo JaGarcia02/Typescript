@@ -5,7 +5,7 @@ import "./App.css";
 import Home from "./pages/Home";
 import Store from "./pages/Store";
 import About from "./pages/About";
-import Navbar from "./components/Navbar";
+import { Navbar } from "./components/Navbar";
 import { ShoppingCartProvider } from "./context/ShoppingCartContext";
 
 function App() {
@@ -28,3 +28,4 @@ function App() {
 export default App;
 
 // https://www.youtube.com/watch?v=lATafp15HWA 41:28
+// https://www.youtube.com/watch?v=u9-O9vCo7kE&ab_channel=BrandonScott

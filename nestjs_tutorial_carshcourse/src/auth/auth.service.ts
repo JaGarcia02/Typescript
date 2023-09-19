@@ -19,13 +19,21 @@ export class AuthService {
       //  Save the new user to database
       const user = await this.prisma.user.create({
         data: {
+          firstName: dto.firstName,
+          lastName: dto.lastName,
           email: dto.email,
           password: hash,
         },
       });
 
       // retutn the saved user
-      return this.signToken(user.id, user.email);
+      return this.signToken(
+        user.id,
+        user.email,
+        user.firstName,
+        user.lastName,
+        user.password,
+      );
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -56,7 +64,13 @@ export class AuthService {
       }
 
       // send back the user
-      return this.signToken(user.id, user.email);
+      return this.signToken(
+        user.id,
+        user.email,
+        user.firstName,
+        user.lastName,
+        user.password,
+      );
     } catch (error) {
       throw new ForbiddenException(error);
     }
@@ -66,10 +80,16 @@ export class AuthService {
   async signToken(
     userId: number,
     email: string,
+    firstName: string,
+    lastName: string,
+    password: string,
   ): Promise<{ access_token: string }> {
     // the payload content
     const payload = {
       id: userId,
+      firstName,
+      lastName,
+      password,
       email,
     };
 

@@ -5,6 +5,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import * as pactum from 'pactum';
 import { AuthDto } from 'src/auth/dto';
 import { EditUserDto } from 'src/user/dto';
+import { CreateBookmarkDto } from 'src/bookmark/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -151,8 +152,8 @@ describe('App e2e', () => {
   });
 
   describe('Bookmarks', () => {
-    describe('Get empty bookmark', () => {
-      it('This should get bookmarks', () => {
+    describe('Get empty bookmarks', () => {
+      it('should get bookmarks', () => {
         return pactum
           .spec()
           .get('/bookmarks')
@@ -160,21 +161,52 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAt}',
           })
           .expectStatus(200)
+          .expectBody([]);
+      });
+    });
+
+    describe('Create bookmark', () => {
+      const dto: CreateBookmarkDto = {
+        title: 'First',
+        description: 'First book that I published.',
+        link: 'www.randomLink.com',
+      };
+      it('This is Create bookmark', () => {
+        return pactum
+          .spec()
+          .post('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
+          .expectStatus(201)
+          .stores('bookmarkId', 'id')
           .inspect();
       });
     });
-    describe('Create bookmark', () => {
-      it.todo('This is Create bookmark');
+
+    describe('Get bookmarks by id', () => {
+      it('This is Get bookmark', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
+          .expectBodyContains('$S{bookmarkId}');
+      });
     });
-    describe('Get bookmarks', () => {
-      it.todo('This is Get bookmark');
-    });
+
     describe('Get bookmarks by id', () => {
       it.todo('This is Get bookmark by id');
     });
+
     describe('Edit bookmarks', () => {
       it.todo('This is Edit bookmark by id');
     });
+
     describe('Delete bookmarks', () => {
       it.todo('This is Delete bookmark by id');
     });

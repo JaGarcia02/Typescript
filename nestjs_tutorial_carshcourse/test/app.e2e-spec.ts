@@ -5,7 +5,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import * as pactum from 'pactum';
 import { AuthDto } from 'src/auth/dto';
 import { EditUserDto } from 'src/user/dto';
-import { CreateBookmarkDto } from 'src/bookmark/dto';
+import { CreateBookmarkDto, EditBookmarkDto } from 'src/bookmark/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -49,8 +49,8 @@ describe('App e2e', () => {
           .withBody({
             password: dto.password,
           })
-          .expectStatus(400);
-        // .inspect();
+          .expectStatus(400)
+          .inspect();
       });
       it('Should throw if password is empty', () => {
         return pactum
@@ -59,20 +59,19 @@ describe('App e2e', () => {
           .withBody({
             email: dto.email,
           })
-          .expectStatus(400);
-        // .inspect();
+          .expectStatus(400)
+          .inspect();
       });
       it('Should throw if email & password is empty', () => {
         return pactum.spec().post('/auth/signup').expectStatus(400);
-        // .inspect();
       });
       it('This is Signup', () => {
         return pactum
           .spec()
           .post('/auth/signup')
           .withBody(dto)
-          .expectStatus(201);
-        // .inspect();
+          .expectStatus(201)
+          .inspect();
       });
     });
 
@@ -84,8 +83,8 @@ describe('App e2e', () => {
           .withBody({
             password: dto.password,
           })
-          .expectStatus(400);
-        // .inspect();
+          .expectStatus(400)
+          .inspect();
       });
       it('Should throw if password is empty', () => {
         return pactum
@@ -94,12 +93,11 @@ describe('App e2e', () => {
           .withBody({
             email: dto.email,
           })
-          .expectStatus(400);
-        // .inspect();
+          .expectStatus(400)
+          .inspect();
       });
       it('Should throw if email & password is empty', () => {
         return pactum.spec().post('/auth/signin').expectStatus(400);
-        // .inspect();
       });
       it('This is Signin', () => {
         let access_token: string;
@@ -108,8 +106,8 @@ describe('App e2e', () => {
           .post('/auth/signin')
           .withBody(dto)
           .expectStatus(200)
-          .stores('userAt', 'access_token');
-        // .inspect();
+          .stores('userAt', 'access_token')
+          .inspect();
       });
     });
   });
@@ -146,7 +144,8 @@ describe('App e2e', () => {
           .expectBodyContains(dto.firstName)
           .expectBodyContains(dto.lastName)
           .expectBodyContains(dto.email)
-          .expectBodyContains(dto.password);
+          .expectBodyContains(dto.password)
+          .inspect();
       });
     });
   });
@@ -161,7 +160,8 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAt}',
           })
           .expectStatus(200)
-          .expectBody([]);
+          .expectBody([])
+          .inspect();
       });
     });
 
@@ -195,20 +195,73 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAt}',
           })
           .expectStatus(200)
-          .expectBodyContains('$S{bookmarkId}');
+          .expectBodyContains('$S{bookmarkId}')
+          .inspect();
       });
     });
 
     describe('Get bookmarks by id', () => {
-      it.todo('This is Get bookmark by id');
+      it('should get bookmark by id', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
+          .expectBodyContains('$S{bookmarkId}')
+          .inspect();
+      });
     });
 
     describe('Edit bookmarks', () => {
-      it.todo('This is Edit bookmark by id');
+      const dto: EditBookmarkDto = {
+        title:
+          'Kubernetes Course - Full Beginners Tutorial (Containerize Your Apps!)',
+        description:
+          'Learn how to use Kubernetes in this complete course. Kubernetes makes it possible to containerize applications and simplifies app deployment to production.',
+      };
+      it('should edit bookmark', () => {
+        return pactum
+          .spec()
+          .patch('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.title)
+          .expectBodyContains(dto.description)
+          .inspect();
+      });
     });
 
     describe('Delete bookmarks', () => {
-      it.todo('This is Delete bookmark by id');
+      it('This is Delete bookmark by id', () => {
+        return pactum
+          .spec()
+          .delete('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(204)
+          .inspect();
+      });
+
+      it('should get empty bookmarks', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(0)
+          .inspect();
+      });
     });
   });
 });

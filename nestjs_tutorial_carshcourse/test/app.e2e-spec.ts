@@ -3,7 +3,7 @@ import { AppModule } from '../src/app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { PrismaService } from '../src/prisma/prisma.service';
 import * as pactum from 'pactum';
-import { AuthDto } from 'src/auth/dto';
+import { AuthDto, AuthSigninDto } from 'src/auth/dto';
 import { EditUserDto } from 'src/user/dto';
 import { CreateBookmarkDto, EditBookmarkDto } from 'src/bookmark/dto';
 
@@ -35,13 +35,13 @@ describe('App e2e', () => {
 
   // This is where we test our Logic we created in the services and also in the controller
   describe('Auth', () => {
-    const dto: AuthDto = {
-      firstName: 'John Timothy',
-      lastName: 'Garcia',
-      email: 'ja02@email.com',
-      password: 'password123',
-    };
     describe('Signup', () => {
+      const dto: AuthDto = {
+        firstName: 'John Timothy',
+        lastName: 'Garcia',
+        email: 'ja02@email.com',
+        password: 'password123',
+      };
       it('Should throw if email is empty', () => {
         return pactum
           .spec()
@@ -77,6 +77,10 @@ describe('App e2e', () => {
 
     describe('Signin', () => {
       it('Should throw if email is empty', () => {
+        const dto: AuthSigninDto = {
+          email: 'ja02@email.com',
+          password: 'password123',
+        };
         return pactum
           .spec()
           .post('/auth/signin')
@@ -87,6 +91,10 @@ describe('App e2e', () => {
           .inspect();
       });
       it('Should throw if password is empty', () => {
+        const dto: AuthSigninDto = {
+          email: 'ja02@email.com',
+          password: 'password123',
+        };
         return pactum
           .spec()
           .post('/auth/signin')
@@ -100,6 +108,10 @@ describe('App e2e', () => {
         return pactum.spec().post('/auth/signin').expectStatus(400);
       });
       it('This is Signin', () => {
+        const dto: AuthSigninDto = {
+          email: 'ja02@email.com',
+          password: 'password123',
+        };
         let access_token: string;
         return pactum
           .spec()

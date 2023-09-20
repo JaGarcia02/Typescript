@@ -1,7 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Request } from 'express';
-import { AuthDto } from './dto';
+import { AuthDto, AuthSigninDto } from './dto';
 
 // # This is the routes located
 
@@ -15,7 +14,7 @@ export class AuthController {
   }
   @HttpCode(HttpStatus.OK) // <---- this can modify the status code of the request
   @Post('signin') // ---- auth/signin
-  signin(@Body() dto: AuthDto) {
+  signin(@Body() dto: AuthSigninDto) {
     return this.authService.signin(dto);
   }
 }

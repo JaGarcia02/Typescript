@@ -11,11 +11,13 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CreateUserDto } from 'src/users/dto/CreateUser.dto';
+import { AuthGuardGuard } from 'src/users/guards/auth-guard/auth-guard.guard';
 import { ValidateCreateUserPipe } from 'src/users/pipes/validate-create-user/validate-create-user.pipe';
 import { UsersService } from 'src/users/services/users/users.service';
 
@@ -33,6 +35,7 @@ export class UsersController {
   constructor(private userService: UsersService) {} // <-- Dependency Injection
 
   @Get()
+  @UseGuards(AuthGuardGuard)
   getAllUsers() {
     return this.userService.fetchUsers();
   }

@@ -6,10 +6,11 @@ import { BankAccountModule } from './bank-account/bank-account.module';
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthService } from './auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [EmployeeModule, AuthModule, BankAccountModule, PrismaModule],
   controllers: [AuthController],
-  providers: [PrismaService, AuthService],
+  providers: [PrismaService, AuthService, JwtService],
 })
 export class AppModule {}

@@ -1,0 +1,14 @@
+version: '3.8s'
+services:
+  persona-api:
+    image: postgres:15
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: abcd1234
+      POSTGRES_DB: nestjs_api_01
+    networks:
+      - SupremeJa
+networks:
+  SupremeJa:

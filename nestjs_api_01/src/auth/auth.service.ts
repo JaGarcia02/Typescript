@@ -3,11 +3,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpTypes } from 'src/utils/auth_utils/signup.types';
 import { LoginTypes } from 'src/utils/auth_utils/login.types';
 import { AuthSignupDto } from './dto/auth.signup.dto';
-import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 @Injectable()
 export class AuthService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private jwt: JwtService,
+  ) {}
 
   async registerUser(signupTypes: SignUpTypes) {
     try {
@@ -56,36 +59,57 @@ export class AuthService {
         where: { email: loginTypes.email },
       });
 
-      const check_username = await this.prismaService.user.findUnique({
-        where: { username: loginTypes.username },
-      });
-
-      if (!check_email || !check_username) {
+      if (!check_email) {
         throw new HttpException(
           'Email and Username not found, please try again!',
           HttpStatus.FORBIDDEN,
         );
       }
 
-      const password_match_emailLogin = bcrypt.compareSync(
+      const password_match = argon.verify(
         check_email.password,
         loginTypes.password,
       );
-      const password_match_usernameLogin = bcrypt.compareSync(
-        check_username.password,
-        loginTypes.password,
-      );
 
-      if (!password_match_emailLogin || !password_match_usernameLogin) {
+      if (!password_match) {
+        throw new HttpException(
+          'Invalid Username or Email!',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
-      return {
-        message: 'User login Successfully',
-        user: check_email || check_username,
-      };
+      return this.signToken(
+        check_email.id,
+        check_email.email,
+        check_email.username,
+        check_email.role,
+      );
     } catch (error) {
       console.log(error);
       throw new HttpException('Something went wrong!', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async signToken(
+    id: number,
+    useranme: string,
+    email: string,
+    role: string,
+  ): Promise<{ access_token: string }> {
+    const token_payload = {
+      id: id,
+      email: email,
+      useranme: useranme,
+      role: role,
+    };
+
+    const token = await this.jwt.signAsync(token_payload, {
+      expiresIn: '15m',
+      secret: process.env.JWT_SECRET,
+    });
+
+    return {
+      access_token: token,
+    };
   }
 }

@@ -2,7 +2,10 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Post,
   Query,
@@ -13,12 +16,42 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CreateUserDto } from 'src/users/dto/CreateUser.dto';
+import { UsersService } from 'src/users/services/users/users.service';
 
 // this will be the routes that you can modify or call the request like Post, Put, Patch, Delete and Get
 
 @Controller('users') // <--- api or route, you can change this what ever you want
 // this will be http://localhost:3001/users
 export class UsersController {
+  /*
+  
+  Dependency Injection is a programming technique in which an object or function receives other objects or functions that it requires, as opposed to creating them internally.
+  
+  */
+
+  constructor(private userService: UsersService) {} // <-- Dependency Injection
+
+  @Get()
+  getAllUsers() {
+    return this.userService.fetchUsers();
+  }
+  @Get(':id')
+  getUserById2(@Param('id', ParseIntPipe) id: number) {
+    const user = this.userService.fetchUserById(id);
+
+    if (!user) {
+      throw new HttpException('User not found!', HttpStatus.BAD_REQUEST);
+    }
+    return user;
+  }
+
+  @Post()
+  @UsePipes(new ValidationPipe())
+  createNewUser2(@Body() userData: CreateUserDto) {
+    console.log(userData);
+    return this.userService.addNewUser(userData);
+  }
+
   @Get('getUsers') // <-- you can name this route any naming you want
   //   to call this route this will be combined to the main route --> http://localhost:3001/users/getUsers
   getUsers() {
@@ -83,14 +116,12 @@ export class UsersController {
     console.log(id);
     return { id };
   }
-  @Get()
-  getUserByIdQuery(@Query('sortBy') sortBy: string) {
-    console.log(sortBy);
+  @Get('test')
+  getUserByIdQuery(@Query('sortDesc', ParseBoolPipe) sortDesc: boolean) {
     return [
       {
         username: 'JaGarcia',
         email: 'ja02@email.com',
-        password: 'abcd1234',
       },
     ];
   }

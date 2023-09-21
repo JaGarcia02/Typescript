@@ -14,6 +14,9 @@ export class UsersMiddleware implements NestMiddleware {
 
     const { authorization } = req.headers;
 
+    // This condition will detect if there are no token or auth in the headers
+    // You can put your conditions here and put some other logic to verify the user
+
     if (!authorization) {
       throw new HttpException('No Authorization Token', HttpStatus.FORBIDDEN);
     }

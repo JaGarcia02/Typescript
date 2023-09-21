@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CreateUserDto } from 'src/users/dto/CreateUser.dto';
+import { ValidateCreateUserPipe } from 'src/users/pipes/validate-create-user/validate-create-user.pipe';
 import { UsersService } from 'src/users/services/users/users.service';
 
 // this will be the routes that you can modify or call the request like Post, Put, Patch, Delete and Get
@@ -47,8 +48,8 @@ export class UsersController {
 
   @Post()
   @UsePipes(new ValidationPipe())
-  createNewUser2(@Body() userData: CreateUserDto) {
-    console.log(userData);
+  createNewUser2(@Body(ValidateCreateUserPipe) userData: CreateUserDto) {
+    console.log(userData.age.toPrecision());
     return this.userService.addNewUser(userData);
   }
 

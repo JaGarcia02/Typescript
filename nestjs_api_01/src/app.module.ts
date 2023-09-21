@@ -5,10 +5,11 @@ import { AuthModule } from './auth/auth.module';
 import { BankAccountModule } from './bank-account/bank-account.module';
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [EmployeeModule, AuthModule, BankAccountModule, PrismaModule],
   controllers: [AuthController],
-  providers: [PrismaService],
+  providers: [PrismaService, AuthService],
 })
 export class AppModule {}

@@ -10,6 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  username  String     @unique
+  password  String
+  role      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Employee  Employee[]
+
+  @@map("user")
+}
+
 model Employee {
   id            Int           @id @default(autoincrement())
   employee_id   String        @unique
@@ -21,6 +34,8 @@ model Employee {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   bankAccount   BankAccount[]
+  profile_owner String
+  user          User          @relation(fields: [profile_owner], references: [email], onDelete: Cascade)
 
   @@map("employee")
 }

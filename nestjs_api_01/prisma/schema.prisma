@@ -28,7 +28,7 @@ model Employee {
   employee_id   String        @unique
   firstName     String
   lastName      String
-  age           String
+  age           Int
   date_of_birth String
   position      String
   createdAt     DateTime      @default(now())

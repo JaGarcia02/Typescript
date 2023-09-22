@@ -5,7 +5,9 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthSignupDto } from './dto/auth.signup.dto';
 import { AuthSignInDto } from './dto/auth.signin.dto';
@@ -26,7 +28,12 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() authSinInDto: AuthSignInDto) {
-    return this.authService.loginUser(authSinInDto);
+  async signIn(
+    @Body() authSinInDto: AuthSignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token_payload = await this.authService.loginUser(authSinInDto);
+    res.header('access_token', token_payload.access_token);
+    return token_payload;
   }
 }

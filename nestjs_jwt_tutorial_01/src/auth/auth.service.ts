@@ -1,12 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { AuthTypes } from 'src/utils';
 
 @Injectable()
 export class AuthService {
-  signUp() {}
+  constructor(private prismaService: PrismaService) {}
 
-  signIn() {}
+  signUp(authTypes: AuthTypes) {
+    try {
+    } catch (error) {
+      throw new ForbiddenException(error);
+    }
+  }
 
-  logOut() {}
+  signIn() {
+    try {
+    } catch (error) {
+      throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
+    }
+  }
 
-  refreshTokens() {}
+  logOut() {
+    try {
+    } catch (error) {
+      throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  refreshTokens() {
+    try {
+    } catch (error) {
+      throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

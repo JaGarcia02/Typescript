@@ -120,15 +120,57 @@ export class AuthService {
     }
   }
 
-  logOut() {
+  async logOut(userId: number) {
     try {
+      const user = await this.prismaService.user.findFirst({
+        where: { id: userId },
+      });
+
+      if (user.hashedRt == null) {
+        throw new HttpException(
+          `Something went wrong, Please try signing in again!`,
+          HttpStatus.FORBIDDEN,
+        );
+      }
+      await this.prismaService.user.updateMany({
+        where: { id: userId, hashedRt: { not: null } },
+        data: {
+          hashedRt: null,
+        },
+      });
+
+      return { message: 'User successfully logged out' };
     } catch (error) {
+      console.log(error);
       throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
     }
   }
 
-  refreshTokens() {
+  async refreshTokens(userId: number, rt: string) {
     try {
+      const user = await this.prismaService.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new HttpException(
+          `Something went wrong, please try again!`,
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      const rt_Matched = await bcrypt.compareSync(rt, user.hashedRt);
+
+      if (!rt_Matched) {
+        throw new HttpException(
+          `Something went wrong, please try again!`,
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      const tokens = await this.getTokens(user.id, user.email);
+      await this.updateRtHash(user.id, tokens.refresh_token);
+      return tokens;
     } catch (error) {
       throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);
     }

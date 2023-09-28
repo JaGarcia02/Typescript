@@ -9,4 +9,4 @@ async function bootstrap() {
 }
 bootstrap();
 
-// https://www.youtube.com/watch?v=uAKzFhE3rxU&t=2026s&ab_channel=CodewithVlad
+// https://www.youtube.com/watch?v=uAKzFhE3rxU&t=2026s&ab_channel=CodewithVlad 1:13:35 / 1:44:12

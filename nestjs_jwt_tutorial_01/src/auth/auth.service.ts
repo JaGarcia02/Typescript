@@ -149,28 +149,21 @@ export class AuthService {
   async refreshTokens(userId: number, rt: string) {
     try {
       const user = await this.prismaService.user.findUnique({
-        where: { id: userId },
+        where: {
+          id: userId,
+        },
       });
-
-      if (!user || user.hashedRt) {
-        throw new HttpException(
-          `Something went wrong, please try again!`,
-          HttpStatus.FORBIDDEN,
-        );
-      }
-
-      const rt_Matched = await bcrypt.compareSync(user.hashedRt, rt);
-
+      if (!user || !user.hashedRt)
+        throw new ForbiddenException('Access Denied');
+      const rt_Matched = await bcrypt.compareSync(rt, user.hashedRt);
       if (!rt_Matched) {
         throw new HttpException(
           `Something went wrong, please try again!`,
           HttpStatus.FORBIDDEN,
         );
       }
-
       const tokens = await this.getTokens(user.id, user.email);
       await this.updateRtHash(user.id, tokens.refresh_token);
-
       return tokens;
     } catch (error) {
       throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);

@@ -1,12 +1,12 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 
 export const GetCurrentUserId = createParamDecorator(
-  (data: undefined, context: ExecutionContext) => {
+  (data: undefined, context: ExecutionContext): number => {
     const request = context.switchToHttp().getRequest();
     if (!data) {
-      return request.user;
+      return request.user.id;
     } else {
-      return request.user['id'];
+      return request.user.id;
     }
   },
 );

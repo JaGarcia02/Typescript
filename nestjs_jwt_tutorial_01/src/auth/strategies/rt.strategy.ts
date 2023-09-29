@@ -13,8 +13,7 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
       passReqToCakkback: true,
     });
   }
-  validate(req: Request, payload: any) {
-    console.log(req);
+  validate(payload: any) {
     return payload;
   }
 }

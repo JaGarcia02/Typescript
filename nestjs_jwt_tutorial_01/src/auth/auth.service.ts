@@ -122,7 +122,7 @@ export class AuthService {
 
   async logOut(userId: number) {
     try {
-      const user = await this.prismaService.user.findFirst({
+      const user = await this.prismaService.user.findUnique({
         where: { id: userId },
       });
 
@@ -152,14 +152,14 @@ export class AuthService {
         where: { id: userId },
       });
 
-      if (!user) {
+      if (!user || user.hashedRt) {
         throw new HttpException(
           `Something went wrong, please try again!`,
           HttpStatus.FORBIDDEN,
         );
       }
 
-      const rt_Matched = await bcrypt.compareSync(rt, user.hashedRt);
+      const rt_Matched = await bcrypt.compareSync(user.hashedRt, rt);
 
       if (!rt_Matched) {
         throw new HttpException(
@@ -170,6 +170,7 @@ export class AuthService {
 
       const tokens = await this.getTokens(user.id, user.email);
       await this.updateRtHash(user.id, tokens.refresh_token);
+
       return tokens;
     } catch (error) {
       throw new HttpException(`${error}`, HttpStatus.BAD_REQUEST);

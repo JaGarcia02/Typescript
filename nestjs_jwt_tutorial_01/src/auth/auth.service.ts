@@ -26,7 +26,7 @@ export class AuthService {
           email: email,
         },
         {
-          secret: 'at-secret',
+          secret: process.env.JWT_AccessToken_Key,
           expiresIn: 60 * 15,
         },
       ),
@@ -36,7 +36,7 @@ export class AuthService {
           email: email,
         },
         {
-          secret: 'rt-secret',
+          secret: process.env.JWT_RefreshToken_Key,
           expiresIn: 60 * 60 * 24 * 7,
         },
       ),
@@ -156,6 +156,7 @@ export class AuthService {
       if (!user || !user.hashedRt)
         throw new ForbiddenException('Access Denied');
       const rt_Matched = await bcrypt.compareSync(rt, user.hashedRt);
+
       if (!rt_Matched) {
         throw new HttpException(
           `Something went wrong, please try again!`,
